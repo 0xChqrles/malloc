@@ -6,19 +6,22 @@
 /*   By: clanier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/23 15:36:00 by clanier           #+#    #+#             */
-/*   Updated: 2017/09/23 16:31:02 by clanier          ###   ########.fr       */
+/*   Updated: 2017/09/23 18:42:06 by clanier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
+#include <stdio.h>
+#include <err.h>
 
 void *malloc(size_t size)
 {
-	int		fd;
-	void	*p;
+	void	*ptr;
 
-	fd = open("/dev/zero", O_RDWR);
-	p = mmap(0, size, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 0);
-	close(fd);
-	return (p);
+	if (size <= 0)
+		return (NULL);
+	ptr = mmap (0, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+	if (ptr == MAP_FAILED)
+		return (NULL);
+	return (ptr);
 }
