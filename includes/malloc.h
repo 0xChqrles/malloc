@@ -1,24 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   malloc.c                                           :+:      :+:    :+:   */
+/*   malloc.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: clanier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/09/23 15:36:00 by clanier           #+#    #+#             */
-/*   Updated: 2017/09/23 16:31:02 by clanier          ###   ########.fr       */
+/*   Created: 2017/09/23 16:27:40 by clanier           #+#    #+#             */
+/*   Updated: 2017/09/23 16:32:43 by clanier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "malloc.h"
+#include <sys/mman.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <stdlib.h>
 
-void *malloc(size_t size)
-{
-	int		fd;
-	void	*p;
-
-	fd = open("/dev/zero", O_RDWR);
-	p = mmap(0, size, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 0);
-	close(fd);
-	return (p);
-}
+void	*malloc(size_t size);
