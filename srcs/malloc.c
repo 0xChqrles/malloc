@@ -6,7 +6,7 @@
 /*   By: clanier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/23 15:36:00 by clanier           #+#    #+#             */
-/*   Updated: 2017/09/23 18:42:06 by clanier          ###   ########.fr       */
+/*   Updated: 2017/09/23 21:58:35 by clanier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,26 @@
 #include <stdio.h>
 #include <err.h>
 
-void *malloc(size_t size)
+void	initZone(void **page, size_t pageSize)
+{
+	if (!(*page))
+		*page = allocMem(size);
+}
+
+void	*malloc(size_t size)
+{
+	static void	*tiny;
+	static void	*small;
+
+	if (size <= TINY)
+		initZone(&tiny, TINY);
+	else if (size <= SMALL)
+		initZone(&small, SMALL);
+	else
+		return (allocMem(size));
+}
+
+void	*allocMem(size_t size)
 {
 	void	*ptr;
 
