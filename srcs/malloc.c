@@ -6,7 +6,7 @@
 /*   By: clanier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/23 15:36:00 by clanier           #+#    #+#             */
-/*   Updated: 2017/09/23 21:58:35 by clanier          ###   ########.fr       */
+/*   Updated: 2017/09/24 17:24:53 by clanier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,19 @@
 #include <stdio.h>
 #include <err.h>
 
-void	getPageMultiple(size_t size)
+void	*allocMem(size_t size)
+{
+	void	*ptr;
+
+	if (size <= 0)
+		return (NULL);
+	ptr = mmap (0, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
+	if (ptr == MAP_FAILED)
+		return (NULL);
+	return (ptr);
+}
+
+int		getPageMultiple(size_t size)
 {
 	size_t	multiple;
 	int		pageSize;
@@ -26,38 +38,31 @@ void	getPageMultiple(size_t size)
 	return (multiple);
 }
 
-void	initZone(void **page, size_t pageSize, size_t size)
+void	*initZone(void **page, size_t pageSize, size_t size, int offset)
 {
-	if (!(*page) || sizeof(*page) < size)
+	if (!(*page) || sizeof(*page) - (offset - size) < size)
 	{
 		if (*page)
 			free(*page);
 		*page = allocMem(size * getPageMultiple(size));
 	}
-	return (/* fonction qui va juste decouper et te renvoyer ce dont t'as besoin */);
+	printf("%d\n", sizeof(*page));
+	printf("%p\n", *page);
+	return (*page + (offset - size));
+//	return (/* fonction qui va juste decouper et te renvoyer ce dont t'as besoin */);
 }
 
 void	*malloc(size_t size)
 {
+	static int	tinyOffset = 0;
+	static int	smallOffset = 0;
 	static void	*tiny;
 	static void	*small;
 
 	if (size > SMALL)
 		return (allocMem(size));
 	if (size <= TINY)
-		return (initZone(&tiny, TINY, size));
+		return (initZone(&tiny, TINY, size, tinyOffset += size));
 	else
-		return (initZone(&small, SMALL, size));
-}
-
-void	*allocMem(size_t size)
-{
-	void	*ptr;
-
-	if (size <= 0)
-		return (NULL);
-	ptr = mmap (0, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-	if (ptr == MAP_FAILED)
-		return (NULL);
-	return (ptr);
+		return (initZone(&small, SMALL, size, smallOffset += size));
 }
