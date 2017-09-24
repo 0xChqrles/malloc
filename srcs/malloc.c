@@ -14,10 +14,27 @@
 #include <stdio.h>
 #include <err.h>
 
-void	initZone(void **page, size_t pageSize)
+void	getPageMultiple(size_t size)
 {
-	if (!(*page))
-		*page = allocMem(size);
+	size_t	multiple;
+	int		pageSize;
+
+	pageSize = getpagesize();
+	multiple = 100;
+	while (multiple * size % pageSize)
+		multiple++;
+	return (multiple);
+}
+
+void	initZone(void **page, size_t pageSize, size_t size)
+{
+	if (!(*page) || sizeof(*page) < size)
+	{
+		if (*page)
+			free(*page);
+		*page = allocMem(size * getPageMultiple(size));
+	}
+	return (/* fonction qui va juste decouper et te renvoyer ce dont t'as besoin */);
 }
 
 void	*malloc(size_t size)
@@ -25,12 +42,12 @@ void	*malloc(size_t size)
 	static void	*tiny;
 	static void	*small;
 
-	if (size <= TINY)
-		initZone(&tiny, TINY);
-	else if (size <= SMALL)
-		initZone(&small, SMALL);
-	else
+	if (size > SMALL)
 		return (allocMem(size));
+	if (size <= TINY)
+		return (initZone(&tiny, TINY, size));
+	else
+		return (initZone(&small, SMALL, size));
 }
 
 void	*allocMem(size_t size)
