@@ -5,21 +5,18 @@
 
 int	main()
 {
+	int		i = 0;
 	char	*win;
-	char	*combo;
 
-	if (!(win = (char*)malloc(sizeof(char) * 4)))
+	while (i++ < 10000)
 	{
-		printf("Error\n");
-		return (0);
+		if (!(win = (char*)malloc(sizeof(char) * 21000)))
+		{
+			printf("Error\n");
+			return (0);
+		}
+		strcpy(win, "hey !!! It's working");
+		printf("%d: %s\n", i, win);
+		free(win);
 	}
-	if (!(combo = (char*)malloc(sizeof(char) * 6)))
-	{
-		printf("Error\n");
-		return (0);
-	}
-	strcpy(win, "win");
-	strcpy(combo, "combo");
-	printf("%s\n", win);
-	printf("%s\n", combo);
 }

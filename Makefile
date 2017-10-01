@@ -6,7 +6,7 @@
 #    By: clanier <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/09/23 15:18:27 by clanier           #+#    #+#              #
-#    Updated: 2017/09/23 15:55:51 by clanier          ###   ########.fr        #
+#    Updated: 2017/10/01 19:13:59 by clanier          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,7 @@ SHEL			=	/bin/sh
 CC				=	gcc
 CFLAGS			=	-g -Wall -Wextra -Werror
 SRCS_DIR		=	srcs/
-SRCS_LIST		=	malloc.c
+SRCS_LIST		=	malloc.c free.c
 SRCS			=	$(addprefix $(SRCS_DIR), $(SRCS_LIST))
 OBJS_DIR		=	objs/
 OBJS_LIST		=	$(patsubst %.c, %.o, $(SRCS_LIST))
