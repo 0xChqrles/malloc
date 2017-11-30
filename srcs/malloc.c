@@ -93,6 +93,7 @@ void	*getFreeMemory(size_t size, void **page, size_t sizeMax)
 				return (setMalloc(size, &mtmp));
 			else if (mtmp->isFree && mtmp->size >= size)
 			{
+				printf("done\n");
 				mtmp->isFree = false;
 				return ((void*)mtmp + sizeof(t_malloc));
 			}

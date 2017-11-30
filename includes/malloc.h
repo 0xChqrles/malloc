@@ -56,6 +56,6 @@ t_line				line;
 void				*malloc(size_t size);
 void				free(void *ptr);
 void				*realloc(void *ptr, size_t size);
-void				findPointer(void *ptr, void **page);
+void				*findPointer(void *ptr, void **page);
 
 #endif
