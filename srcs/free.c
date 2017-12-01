@@ -6,7 +6,7 @@
 /*   By: clanier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/01 16:28:45 by clanier           #+#    #+#             */
-/*   Updated: 2017/10/01 21:09:30 by clanier          ###   ########.fr       */
+/*   Updated: 2017/12/01 21:19:33 by clanier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,8 @@ void	freePage(void **page, char pageType)
 		line.small = ptmp->next;
 	if (ptmp->next)
 		ptmp->next->prev = ptmp->prev;
-	munmap((void*)ptmp, ptmp->size);
+	line.limit += ptmp->size + sizeof(t_page);
+	munmap((void*)ptmp, ptmp->size + sizeof(t_page));
 	ptmp = NULL;
 }
 
@@ -71,15 +72,11 @@ void		*findPointer(void *ptr, void **page)
 		{
 			mtmp = ptmp->first;
 			while (mtmp && ptr != mtmp + sizeof(t_malloc))
-			{printf("m => %lu\np => %lu\n", (unsigned long)mtmp, (unsigned long)ptr);
-				mtmp = mtmp->next;}
+				mtmp = mtmp->next;
 			if (mtmp && ptr == mtmp + sizeof(t_malloc))
 				return (mtmp);
 			else
-			{
-				printf("oshit\n");
 				return (NULL);
-			}
 		}
 		ptmp = ptmp->next;
 	}
@@ -113,6 +110,7 @@ void	free(void *ptr)
 			line.large = mtmp->next;
 		if (mtmp->next)
 			mtmp->next->prev = mtmp->prev;
+		line.limit += mtmp->size + sizeof(t_malloc);
 		munmap(mtmp, mtmp->size + sizeof(t_malloc));
 	}
 }

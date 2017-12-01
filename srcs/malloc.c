@@ -6,12 +6,11 @@
 /*   By: clanier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/23 15:36:00 by clanier           #+#    #+#             */
-/*   Updated: 2017/10/01 20:43:39 by clanier          ###   ########.fr       */
+/*   Updated: 2017/12/01 21:14:56 by clanier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
-#include <stdio.h>
 
 void	*initPage(size_t size, void **page, t_page *prev)
 {
@@ -67,7 +66,7 @@ void	*setMalloc(size_t size, t_malloc **mem)
 {
 	t_malloc	*new;
 
-	new = (void*)(*mem) + sizeof(t_malloc) + size;
+	new = *mem + sizeof(t_malloc) + size;
 	new->size = (*mem)->size - size - sizeof(t_malloc) - 1;
 	new->isFree = true;
 	new->next = (*mem)->next;
@@ -93,16 +92,13 @@ void	*getFreeMemory(size_t size, void **page, size_t sizeMax)
 				return (setMalloc(size, &mtmp));
 			else if (mtmp->isFree && mtmp->size >= size)
 			{
-				printf("done\n");
 				mtmp->isFree = false;
-				return ((void*)mtmp + sizeof(t_malloc));
+				return (mtmp + sizeof(t_malloc));
 			}
 			mtmp = mtmp->next;
 		}
 		ptmp = (t_page*)ptmp->next;
 	}
-	printf("full page...\n");
-	sleep(1);
 	if (createPage(sizeMax, page, *page) < 0)
 		return (NULL);
 	ptmp = (t_page*)(*page);
@@ -136,7 +132,7 @@ void	*largeMalloc(size_t size)
 		tmp->next = new;
 		new->prev = tmp;
 	}
-	return (ptr + sizeof(t_malloc));
+	return (new + sizeof(t_malloc));
 }
 
 void	*malloc(size_t size)

@@ -5,29 +5,20 @@
 
 int	main()
 {
-	int		i = 0;
 	char	*win;
+	char	*win2;
 
 	malloc(20);
+	win = malloc(120);
 	malloc(20);
-	win = malloc(21);
-	printf("3 = > %lu\n", (unsigned long)win);
-	malloc(20);
+	realloc(win, 20);
+	malloc(68);
+	win2 = malloc(4100);
+	win = malloc(5683);
 	free(win);
-	printf("2 = > %lu\n", (unsigned long)win);
-	win = malloc(16);
-	win = realloc(win, 20);
-/*	while (i++ < 10000)
-	{
-		if (!(win = (char*)malloc(sizeof(char) * 210)))
-		{
-			printf("Error\n");
-			return (0);
-		}
-		strcpy(win, "hey !!! It's working");
-		printf("%d: %s\n", i, win);
-		realloc(win, 10);
-		free(win);
-	}
-	sleep(5);*/
+	realloc(win2, 10);
+	win = malloc(3000);
+	win2 = malloc(3200);
+	realloc(win, 1);
+	show_alloc_mem();
 }

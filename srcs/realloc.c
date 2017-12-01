@@ -6,70 +6,70 @@
 /*   By: clanier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/01 20:55:13 by clanier           #+#    #+#             */
-/*   Updated: 2017/10/01 21:13:49 by clanier          ###   ########.fr       */
+/*   Updated: 2017/12/01 21:26:19 by clanier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
-#include <stdio.h>
 
-void	*reallocMemory(void *ptr, void **page, char pageType, size_t size)
-{
-	t_page		*ptmp;
-	t_malloc	*mtmp;
-
-	mtmp = (t_malloc*)ptr;
-	ptmp = (t_page*)*page;
-	(void)pageType;
-	printf("hey");
-	if (mtmp->size <= size)
-		printf("nice job");
-	return (NULL);
-}
-
-void	*moveData(t_malloc *src, void *dest, size_t size, bool free)
+void	*moveData(t_malloc *src, void *dest, size_t size)
 {
 	unsigned int	i;
 
 	i = 0;
-	while (i < size)
+	while (i < size && i < src->size)
 	{
-		if (i < src->size)
-			((unsigned char*)(dest))[i] = ((unsigned char*)(src + sizeof(t_malloc)))[i];
-		else
-			((unsigned char*)(dest))[i] = 0;
+		((unsigned char*)(dest))[i] =
+		((unsigned char*)(src + sizeof(t_malloc)))[i];
 		i++;
 	}
-	if (free)
-		munmap(src, src->size + sizeof(t_malloc));
 	return (dest);
+}
+
+void	*reallocMemory(void *ptr, size_t size, char pageType)
+{
+	t_malloc	*mtmp;
+	void		*new;
+
+	mtmp = (t_malloc*)ptr;
+	if (size <= mtmp->size && (pageType == 't' || (pageType == 's' && size > TINY)))
+	{
+		if (mtmp->size > sizeof(t_malloc)
+		&& size < mtmp->size - sizeof(t_malloc))
+			return (setMalloc(size, &mtmp));
+		else
+			return (mtmp + sizeof(t_malloc));
+	}
+	if (!(new = malloc(size)))
+		return (NULL);
+	moveData(mtmp, new, size);
+	free(mtmp + sizeof(t_malloc));
+	return (new);
 }
 
 void	*realloc(void *ptr, size_t size)
 {
 	t_malloc	*mtmp;
-	void		*newLargePtr;
+	void		*new;
 
 	if (!ptr)
 		return (malloc(size));
 	if ((mtmp = findPointer(ptr, &line.tiny)))
-		return (reallocMemory(mtmp, &line.tiny, 't', size));
+		return (reallocMemory(mtmp, size, 't'));
 	if ((mtmp = findPointer(ptr, &line.small)))
-		return (reallocMemory(mtmp, &line.small, 's', size));
+		return (reallocMemory(mtmp, size, 's'));
 	mtmp = line.large;
 	while (mtmp && ptr != mtmp + sizeof(t_malloc))
 		mtmp = mtmp->next;
 	if (mtmp && ptr == mtmp + sizeof(t_malloc))
 	{
-		if (!(newLargePtr = malloc(size)))
+		if (mtmp->size >= size && size > SMALL)
+			return (ptr);
+		if (!(new = malloc(size)))
 			return (NULL);
-		if (mtmp->prev)
-			mtmp->prev->next = mtmp->next;
-		else
-			line.large = mtmp->next;
-		if (mtmp->next)
-			mtmp->next->prev = mtmp->prev;
-		return (moveData(mtmp, newLargePtr, size, true));
+		moveData(mtmp, new, size);
+		free(ptr);
+		return (new);
 	}
 	return (NULL);
 }
