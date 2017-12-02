@@ -6,59 +6,26 @@
 /*   By: clanier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/23 15:36:00 by clanier           #+#    #+#             */
-/*   Updated: 2017/12/01 21:14:56 by clanier          ###   ########.fr       */
+/*   Updated: 2017/12/02 18:37:02 by clanier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
 
-void	*init_page(size_t size, void **page, t_page *prev)
-{
-	t_malloc	*mhead;
-	t_page		*phead;
-
-	mhead = (t_malloc*)(*page + sizeof(t_page));
-	mhead->size = size - sizeof(t_page) - sizeof(t_malloc) - 2;
-	mhead->prev = NULL;
-	mhead->next = NULL;
-	mhead->isFree = true;
-	phead = (t_page*)(*page);
-	phead->first = mhead;
-	phead->prev = prev;
-	phead->next = NULL;
-	phead->size = size;
-	phead->end = *page + size - 1;
-	if (prev)
-		prev->next = *page;
-	return (phead);
-}
-
-int		create_page(size_t allocMax, void **page, t_page *prev)
+int		create_page(size_t alloc_max, void **page, t_page *prev)
 {
 	size_t	size;
-	size_t	pageSize;
+	size_t	page_size;
 
-	pageSize = getpagesize();
-	size = 100 * (allocMax + sizeof(t_malloc)) + sizeof(t_page);
-	if (size % pageSize)
-		size += pageSize - size % pageSize;
-	if (size > line.limit
+	page_size = getpagesize();
+	size = 100 * (alloc_max + sizeof(t_malloc)) + sizeof(t_page);
+	if (size % page_size)
+		size += page_size - size % page_size;
+	if (size > g_line.limit
 	|| (*page = mmap(0, size, MMAP_PROT, MMAP_FLAGS, -1, 0)) == MAP_FAILED)
 		return (-1);
-	line.limit -= size;
+	g_line.limit -= size;
 	init_page(size, page, prev);
-	return (0);
-}
-
-int		init()
-{
-	struct rlimit	limit;
-
-	if (!getrlimit(RLIMIT_MEMLOCK, &limit))
-		line.limit = limit.rlim_cur;
-	if ((!line.tiny && create_page(TINY, &line.tiny, NULL) < 0)
-	|| (!line.small && create_page(SMALL, &line.small, NULL) < 0))
-		return (-1);
 	return (0);
 }
 
@@ -77,7 +44,7 @@ void	*set_malloc(size_t size, t_malloc **mem)
 	return ((*mem) + sizeof(t_malloc));
 }
 
-void	*get_free_memory(size_t size, void **page, size_t sizeMax)
+void	*get_free_memory(size_t size, void **page, size_t size_max)
 {
 	t_malloc	*mtmp;
 	t_page		*ptmp;
@@ -99,7 +66,7 @@ void	*get_free_memory(size_t size, void **page, size_t sizeMax)
 		}
 		ptmp = (t_page*)ptmp->next;
 	}
-	if (create_page(sizeMax, page, *page) < 0)
+	if (create_page(size_max, page, *page) < 0)
 		return (NULL);
 	ptmp = (t_page*)(*page);
 	mtmp = ptmp->first;
@@ -113,20 +80,20 @@ void	*large_malloc(size_t size)
 	t_malloc	*new;
 
 	size += sizeof(t_malloc);
-	if (line.limit < size
+	if (g_line.limit < size
 	|| (ptr = mmap(0, size, MMAP_PROT, MMAP_FLAGS, -1, 0)) == MAP_FAILED)
 		return (NULL);
-	line.limit -= size;
+	g_line.limit -= size;
 	new = (t_malloc*)ptr;
 	new->next = NULL;
 	new->prev = NULL;
 	new->isFree = false;
 	new->size = size - sizeof(t_malloc);
-	if (!line.large)
-		line.large = new;
+	if (!g_line.large)
+		g_line.large = new;
 	else
 	{
-		tmp = line.large;
+		tmp = g_line.large;
 		while (tmp->next)
 			tmp = tmp->next;
 		tmp->next = new;
@@ -135,13 +102,13 @@ void	*large_malloc(size_t size)
 	return (new + sizeof(t_malloc));
 }
 
-void	*malloc(size_t size)
+void	*ft_malloc(size_t size)
 {
-	if ((!line.tiny && init() < 0) || size <= 0)
+	if ((!g_line.tiny && init() < 0) || size <= 0)
 		return (NULL);
 	if (size < TINY)
-		return (get_free_memory(size, &line.tiny, TINY));
+		return (get_free_memory(size, &g_line.tiny, TINY));
 	if (size < SMALL)
-		return (get_free_memory(size, &line.small, SMALL));
+		return (get_free_memory(size, &g_line.small, SMALL));
 	return (large_malloc(size));
 }

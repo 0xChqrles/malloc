@@ -6,31 +6,38 @@
 /*   By: clanier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/01 17:37:00 by clanier           #+#    #+#             */
-/*   Updated: 2017/12/01 21:31:58 by clanier          ###   ########.fr       */
+/*   Updated: 2017/12/02 18:55:40 by clanier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
 
-bool	is_empty(t_page *page)
+void	print_header(char *page_name, size_t first)
 {
-	t_malloc	*mtmp;
-
-	while (page)
-	{
-		mtmp = page->first;
-		while (mtmp)
-		{
-			if (!mtmp->isFree)
-				return (false);
-			mtmp = mtmp->next;
-		}
-		page = page->next;
-	}
-	return (true);
+	ft_putstr(page_name);
+	ft_putstr(" : ");
+	ft_putnbr_base(first, 16);
+	ft_putchar('\n');
 }
 
-size_t	show_page(t_page *page, char *pageName)
+void	print_total(size_t total)
+{
+	ft_putstr("Total : ");
+	ft_putnbr_base(total, 10);
+	ft_putstr(" octets\n");
+}
+
+void	print_malloc(size_t from, size_t size)
+{
+	ft_putnbr_base(from, 16);
+	ft_putstr(" - ");
+	ft_putnbr_base(from + size, 16);
+	ft_putstr(" : ");
+	ft_putnbr_base(size, 10);
+	ft_putstr(" octets\n");
+}
+
+size_t	show_page(t_page *page, char *page_name)
 {
 	t_malloc	*mtmp;
 	size_t		from;
@@ -38,7 +45,7 @@ size_t	show_page(t_page *page, char *pageName)
 
 	if (is_empty(page))
 		return (0);
-	ft_printf("%s : 0x%lX\n", pageName, (unsigned long)page->first);
+	print_header(page_name, (size_t)page->first);
 	total = 0;
 	while (page)
 	{
@@ -48,9 +55,8 @@ size_t	show_page(t_page *page, char *pageName)
 			if (!mtmp->isFree)
 			{
 				total += mtmp->size;
-				from = (unsigned long)(mtmp + sizeof(t_malloc));
-				printf("0x%lX - 0x%lX : %lu octets\n",
-				from, from + mtmp->size, mtmp->size);
+				from = (size_t)(mtmp) + sizeof(t_malloc);
+				print_malloc(from, mtmp->size);
 			}
 			mtmp = mtmp->next;
 		}
@@ -59,28 +65,24 @@ size_t	show_page(t_page *page, char *pageName)
 	return (total);
 }
 
-void	show_alloc_mem()
+void	ft_show_alloc_mem(void)
 {
 	t_malloc	*large;
 	size_t		total;
 	size_t		from;
 
-	total = show_page(line.tiny, "TINY");
-	total += show_page(line.small, "SMALL");
-	if (!line.large)
-	{
-		printf("Total : %lu octets\n", total);
-		return ;
-	}
-	ft_printf("LARGE : 0x%lX\n", (unsigned long)line.large);
-	large = line.large;
+	total = show_page(g_line.tiny, "TINY");
+	total += show_page(g_line.small, "SMALL");
+	if (!g_line.large)
+		return (print_total(total));
+	print_header("LARGE", (size_t)g_line.large);
+	large = g_line.large;
 	while (large)
 	{
 		total += large->size;
-		from = (unsigned long)(large + sizeof(t_malloc));
-		printf("0x%lX - 0x%lX : %lu octets\n",
-		from, from + large->size, large->size);
+		from = (size_t)(large) + sizeof(t_malloc);
+		print_malloc(from, large->size);
 		large = large->next;
 	}
-	printf("Total : %lu octets\n", total);
+	print_total(total);
 }

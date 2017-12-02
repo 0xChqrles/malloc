@@ -6,7 +6,7 @@
 /*   By: clanier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/01 16:28:45 by clanier           #+#    #+#             */
-/*   Updated: 2017/12/01 21:19:33 by clanier          ###   ########.fr       */
+/*   Updated: 2017/12/02 18:34:11 by clanier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	free_malloc(t_malloc *mem)
 	}
 }
 
-void	free_page(void **page, char pageType)
+void	free_page(void **page, char page_type)
 {
 	t_page		*ptmp;
 	t_malloc	*mtmp;
@@ -49,18 +49,18 @@ void	free_page(void **page, char pageType)
 	}
 	if (ptmp->prev)
 		ptmp->prev->next = ptmp->next;
-	else if (pageType == 't')
-		line.tiny = ptmp->next;
-	else if (pageType == 's')
-		line.small = ptmp->next;
+	else if (page_type == 't')
+		g_line.tiny = ptmp->next;
+	else if (page_type == 's')
+		g_line.small = ptmp->next;
 	if (ptmp->next)
 		ptmp->next->prev = ptmp->prev;
-	line.limit += ptmp->size + sizeof(t_page);
+	g_line.limit += ptmp->size + sizeof(t_page);
 	munmap((void*)ptmp, ptmp->size + sizeof(t_page));
 	ptmp = NULL;
 }
 
-void		*find_pointer(void *ptr, void **page)
+void	*find_pointer(void *ptr, void **page)
 {
 	t_page		*ptmp;
 	t_malloc	*mtmp;
@@ -83,23 +83,23 @@ void		*find_pointer(void *ptr, void **page)
 	return (NULL);
 }
 
-void	free_memory(t_malloc *mem, void **page, char pageType)
+void	free_memory(t_malloc *mem, void **page, char page_type)
 {
 	free_malloc(mem);
-	free_page(page, pageType);
+	free_page(page, page_type);
 }
 
-void	free(void *ptr)
+void	ft_free(void *ptr)
 {
 	t_malloc	*mtmp;
 
 	if (!ptr)
-	   return ;
-	if ((mtmp = find_pointer(ptr, &line.tiny)))
-		return (free_memory(mtmp, &line.tiny, 't'));
-	if ((mtmp = find_pointer(ptr, &line.small)))
-		return (free_memory(mtmp, &line.small, 's'));
-	mtmp = line.large;
+		return ;
+	if ((mtmp = find_pointer(ptr, &g_line.tiny)))
+		return (free_memory(mtmp, &g_line.tiny, 't'));
+	if ((mtmp = find_pointer(ptr, &g_line.small)))
+		return (free_memory(mtmp, &g_line.small, 's'));
+	mtmp = g_line.large;
 	while (mtmp && ptr != mtmp + sizeof(t_malloc))
 		mtmp = mtmp->next;
 	if (mtmp && ptr == mtmp + sizeof(t_malloc))
@@ -107,10 +107,10 @@ void	free(void *ptr)
 		if (mtmp->prev)
 			mtmp->prev->next = mtmp->next;
 		else
-			line.large = mtmp->next;
+			g_line.large = mtmp->next;
 		if (mtmp->next)
 			mtmp->next->prev = mtmp->prev;
-		line.limit += mtmp->size + sizeof(t_malloc);
+		g_line.limit += mtmp->size + sizeof(t_malloc);
 		munmap(mtmp, mtmp->size + sizeof(t_malloc));
 	}
 }

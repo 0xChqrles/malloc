@@ -6,7 +6,7 @@
 /*   By: clanier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/01 20:55:13 by clanier           #+#    #+#             */
-/*   Updated: 2017/12/01 21:26:19 by clanier          ###   ########.fr       */
+/*   Updated: 2017/12/02 18:40:28 by clanier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,14 @@ void	*move_data(t_malloc *src, void *dest, size_t size)
 	return (dest);
 }
 
-void	*realloc_memory(void *ptr, size_t size, char pageType)
+void	*realloc_memory(void *ptr, size_t size, char page_type)
 {
 	t_malloc	*mtmp;
 	void		*new;
 
 	mtmp = (t_malloc*)ptr;
-	if (size <= mtmp->size && (pageType == 't' || (pageType == 's' && size > TINY)))
+	if (size <= mtmp->size
+	&& (page_type == 't' || (page_type == 's' && size > TINY)))
 	{
 		if (mtmp->size > sizeof(t_malloc)
 		&& size < mtmp->size - sizeof(t_malloc))
@@ -47,18 +48,18 @@ void	*realloc_memory(void *ptr, size_t size, char pageType)
 	return (new);
 }
 
-void	*realloc(void *ptr, size_t size)
+void	*ft_realloc(void *ptr, size_t size)
 {
 	t_malloc	*mtmp;
 	void		*new;
 
 	if (!ptr)
 		return (malloc(size));
-	if ((mtmp = find_pointer(ptr, &line.tiny)))
+	if ((mtmp = find_pointer(ptr, &g_line.tiny)))
 		return (realloc_memory(mtmp, size, 't'));
-	if ((mtmp = find_pointer(ptr, &line.small)))
+	if ((mtmp = find_pointer(ptr, &g_line.small)))
 		return (realloc_memory(mtmp, size, 's'));
-	mtmp = line.large;
+	mtmp = g_line.large;
 	while (mtmp && ptr != mtmp + sizeof(t_malloc))
 		mtmp = mtmp->next;
 	if (mtmp && ptr == mtmp + sizeof(t_malloc))
