@@ -13,7 +13,7 @@
 #include "malloc.h"
 #include <stdio.h>
 
-void	freeMalloc(t_malloc *mem)
+void	free_malloc(t_malloc *mem)
 {
 	mem->isFree = true;
 	if (mem->prev && mem->prev->isFree)
@@ -32,7 +32,7 @@ void	freeMalloc(t_malloc *mem)
 	}
 }
 
-void	freePage(void **page, char pageType)
+void	free_page(void **page, char pageType)
 {
 	t_page		*ptmp;
 	t_malloc	*mtmp;
@@ -60,7 +60,7 @@ void	freePage(void **page, char pageType)
 	ptmp = NULL;
 }
 
-void		*findPointer(void *ptr, void **page)
+void		*find_pointer(void *ptr, void **page)
 {
 	t_page		*ptmp;
 	t_malloc	*mtmp;
@@ -83,10 +83,10 @@ void		*findPointer(void *ptr, void **page)
 	return (NULL);
 }
 
-void	freeMemory(t_malloc *mem, void **page, char pageType)
+void	free_memory(t_malloc *mem, void **page, char pageType)
 {
-	freeMalloc(mem);
-	freePage(page, pageType);
+	free_malloc(mem);
+	free_page(page, pageType);
 }
 
 void	free(void *ptr)
@@ -95,10 +95,10 @@ void	free(void *ptr)
 
 	if (!ptr)
 	   return ;
-	if ((mtmp = findPointer(ptr, &line.tiny)))
-		return (freeMemory(mtmp, &line.tiny, 't'));
-	if ((mtmp = findPointer(ptr, &line.small)))
-		return (freeMemory(mtmp, &line.small, 's'));
+	if ((mtmp = find_pointer(ptr, &line.tiny)))
+		return (free_memory(mtmp, &line.tiny, 't'));
+	if ((mtmp = find_pointer(ptr, &line.small)))
+		return (free_memory(mtmp, &line.small, 's'));
 	mtmp = line.large;
 	while (mtmp && ptr != mtmp + sizeof(t_malloc))
 		mtmp = mtmp->next;

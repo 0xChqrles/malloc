@@ -30,7 +30,7 @@ bool	is_empty(t_page *page)
 	return (true);
 }
 
-size_t	showPage(t_page *page, char *pageName)
+size_t	show_page(t_page *page, char *pageName)
 {
 	t_malloc	*mtmp;
 	size_t		from;
@@ -65,8 +65,8 @@ void	show_alloc_mem()
 	size_t		total;
 	size_t		from;
 
-	total = showPage(line.tiny, "TINY");
-	total += showPage(line.small, "SMALL");
+	total = show_page(line.tiny, "TINY");
+	total += show_page(line.small, "SMALL");
 	if (!line.large)
 	{
 		printf("Total : %lu octets\n", total);

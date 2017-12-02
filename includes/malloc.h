@@ -55,10 +55,10 @@ typedef				struct s_page
 t_line				line;
 
 void				show_alloc_mem();
-void				*setMalloc(size_t size, t_malloc **mem);
+void				*set_malloc(size_t size, t_malloc **mem);
 void				*malloc(size_t size);
 void				free(void *ptr);
 void				*realloc(void *ptr, size_t size);
-void				*findPointer(void *ptr, void **page);
+void				*find_pointer(void *ptr, void **page);
 
 #endif

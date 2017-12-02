@@ -12,7 +12,7 @@
 
 #include "malloc.h"
 
-void	*moveData(t_malloc *src, void *dest, size_t size)
+void	*move_data(t_malloc *src, void *dest, size_t size)
 {
 	unsigned int	i;
 
@@ -26,7 +26,7 @@ void	*moveData(t_malloc *src, void *dest, size_t size)
 	return (dest);
 }
 
-void	*reallocMemory(void *ptr, size_t size, char pageType)
+void	*realloc_memory(void *ptr, size_t size, char pageType)
 {
 	t_malloc	*mtmp;
 	void		*new;
@@ -36,13 +36,13 @@ void	*reallocMemory(void *ptr, size_t size, char pageType)
 	{
 		if (mtmp->size > sizeof(t_malloc)
 		&& size < mtmp->size - sizeof(t_malloc))
-			return (setMalloc(size, &mtmp));
+			return (set_malloc(size, &mtmp));
 		else
 			return (mtmp + sizeof(t_malloc));
 	}
 	if (!(new = malloc(size)))
 		return (NULL);
-	moveData(mtmp, new, size);
+	move_data(mtmp, new, size);
 	free(mtmp + sizeof(t_malloc));
 	return (new);
 }
@@ -54,10 +54,10 @@ void	*realloc(void *ptr, size_t size)
 
 	if (!ptr)
 		return (malloc(size));
-	if ((mtmp = findPointer(ptr, &line.tiny)))
-		return (reallocMemory(mtmp, size, 't'));
-	if ((mtmp = findPointer(ptr, &line.small)))
-		return (reallocMemory(mtmp, size, 's'));
+	if ((mtmp = find_pointer(ptr, &line.tiny)))
+		return (realloc_memory(mtmp, size, 't'));
+	if ((mtmp = find_pointer(ptr, &line.small)))
+		return (realloc_memory(mtmp, size, 's'));
 	mtmp = line.large;
 	while (mtmp && ptr != mtmp + sizeof(t_malloc))
 		mtmp = mtmp->next;
@@ -67,7 +67,7 @@ void	*realloc(void *ptr, size_t size)
 			return (ptr);
 		if (!(new = malloc(size)))
 			return (NULL);
-		moveData(mtmp, new, size);
+		move_data(mtmp, new, size);
 		free(ptr);
 		return (new);
 	}

@@ -12,7 +12,7 @@
 
 #include "malloc.h"
 
-void	*initPage(size_t size, void **page, t_page *prev)
+void	*init_page(size_t size, void **page, t_page *prev)
 {
 	t_malloc	*mhead;
 	t_page		*phead;
@@ -33,7 +33,7 @@ void	*initPage(size_t size, void **page, t_page *prev)
 	return (phead);
 }
 
-int		createPage(size_t allocMax, void **page, t_page *prev)
+int		create_page(size_t allocMax, void **page, t_page *prev)
 {
 	size_t	size;
 	size_t	pageSize;
@@ -46,7 +46,7 @@ int		createPage(size_t allocMax, void **page, t_page *prev)
 	|| (*page = mmap(0, size, MMAP_PROT, MMAP_FLAGS, -1, 0)) == MAP_FAILED)
 		return (-1);
 	line.limit -= size;
-	initPage(size, page, prev);
+	init_page(size, page, prev);
 	return (0);
 }
 
@@ -56,13 +56,13 @@ int		init()
 
 	if (!getrlimit(RLIMIT_MEMLOCK, &limit))
 		line.limit = limit.rlim_cur;
-	if ((!line.tiny && createPage(TINY, &line.tiny, NULL) < 0)
-	|| (!line.small && createPage(SMALL, &line.small, NULL) < 0))
+	if ((!line.tiny && create_page(TINY, &line.tiny, NULL) < 0)
+	|| (!line.small && create_page(SMALL, &line.small, NULL) < 0))
 		return (-1);
 	return (0);
 }
 
-void	*setMalloc(size_t size, t_malloc **mem)
+void	*set_malloc(size_t size, t_malloc **mem)
 {
 	t_malloc	*new;
 
@@ -77,7 +77,7 @@ void	*setMalloc(size_t size, t_malloc **mem)
 	return ((*mem) + sizeof(t_malloc));
 }
 
-void	*getFreeMemory(size_t size, void **page, size_t sizeMax)
+void	*get_free_memory(size_t size, void **page, size_t sizeMax)
 {
 	t_malloc	*mtmp;
 	t_page		*ptmp;
@@ -89,7 +89,7 @@ void	*getFreeMemory(size_t size, void **page, size_t sizeMax)
 		while (mtmp)
 		{
 			if (mtmp->isFree && mtmp->size > size + sizeof(t_malloc))
-				return (setMalloc(size, &mtmp));
+				return (set_malloc(size, &mtmp));
 			else if (mtmp->isFree && mtmp->size >= size)
 			{
 				mtmp->isFree = false;
@@ -99,14 +99,14 @@ void	*getFreeMemory(size_t size, void **page, size_t sizeMax)
 		}
 		ptmp = (t_page*)ptmp->next;
 	}
-	if (createPage(sizeMax, page, *page) < 0)
+	if (create_page(sizeMax, page, *page) < 0)
 		return (NULL);
 	ptmp = (t_page*)(*page);
 	mtmp = ptmp->first;
-	return (setMalloc(size, &mtmp));
+	return (set_malloc(size, &mtmp));
 }
 
-void	*largeMalloc(size_t size)
+void	*large_malloc(size_t size)
 {
 	void		*ptr;
 	t_malloc	*tmp;
@@ -140,8 +140,8 @@ void	*malloc(size_t size)
 	if ((!line.tiny && init() < 0) || size <= 0)
 		return (NULL);
 	if (size < TINY)
-		return (getFreeMemory(size, &line.tiny, TINY));
+		return (get_free_memory(size, &line.tiny, TINY));
 	if (size < SMALL)
-		return (getFreeMemory(size, &line.small, SMALL));
-	return (largeMalloc(size));
+		return (get_free_memory(size, &line.small, SMALL));
+	return (large_malloc(size));
 }
