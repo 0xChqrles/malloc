@@ -6,7 +6,7 @@
 /*   By: clanier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/01 20:55:13 by clanier           #+#    #+#             */
-/*   Updated: 2017/12/02 18:40:28 by clanier          ###   ########.fr       */
+/*   Updated: 2017/12/02 20:13:16 by clanier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,10 @@ void	*realloc_memory(void *ptr, size_t size, char page_type)
 		else
 			return (mtmp + sizeof(t_malloc));
 	}
-	if (!(new = malloc(size)))
+	if (!(new = ft_malloc(size)))
 		return (NULL);
 	move_data(mtmp, new, size);
-	free(mtmp + sizeof(t_malloc));
+	ft_free(mtmp + sizeof(t_malloc));
 	return (new);
 }
 
@@ -54,7 +54,7 @@ void	*ft_realloc(void *ptr, size_t size)
 	void		*new;
 
 	if (!ptr)
-		return (malloc(size));
+		return (ft_malloc(size));
 	if ((mtmp = find_pointer(ptr, &g_line.tiny)))
 		return (realloc_memory(mtmp, size, 't'));
 	if ((mtmp = find_pointer(ptr, &g_line.small)))
@@ -66,10 +66,10 @@ void	*ft_realloc(void *ptr, size_t size)
 	{
 		if (mtmp->size >= size && size > SMALL)
 			return (ptr);
-		if (!(new = malloc(size)))
+		if (!(new = ft_malloc(size)))
 			return (NULL);
 		move_data(mtmp, new, size);
-		free(ptr);
+		ft_free(ptr);
 		return (new);
 	}
 	return (NULL);

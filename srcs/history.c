@@ -1,31 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   calloc.c                                           :+:      :+:    :+:   */
+/*   history.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: clanier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/12/02 17:35:22 by clanier           #+#    #+#             */
-/*   Updated: 2017/12/02 20:12:10 by clanier          ###   ########.fr       */
+/*   Created: 2017/12/02 19:16:39 by clanier           #+#    #+#             */
+/*   Updated: 2017/12/02 19:24:25 by clanier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
 
-void	*ft_bzero(void *s, size_t n)
+void	add_to_history()
 {
-	while (n--)
-		((unsigned char*)s)[n] = 0;
-	return (s);
+	
 }
 
-void	*ft_calloc(size_t nmemb, size_t size)
+void	show_history()
 {
-	void	*ptr;
+	t_history	*htmp;
 
-	size *= nmemb;
-	if (!(ptr = ft_malloc(size)))
-		return (NULL);
-	ft_bzero(ptr, size);
-	return (ptr);
+	htmp = line.history;
+	while (htmp)
+	{
+		ft_putstr(htmp->isSuccess ? "\033[31,1m" : "\033[33,1m");
+		ft_putstr(htmp->action);
+		ft_putstr(" : ");
+		ft_putnbr_base(htmp->size, 10);
+		ft_putstr(" octets\033[0m\n");
+		htmp = htmp->next;
+	}
 }
