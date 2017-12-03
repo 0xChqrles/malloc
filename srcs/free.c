@@ -6,7 +6,7 @@
 /*   By: clanier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/01 16:28:45 by clanier           #+#    #+#             */
-/*   Updated: 2017/12/03 20:55:10 by clanier          ###   ########.fr       */
+/*   Updated: 2017/12/03 22:00:43 by clanier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,9 @@
 
 void	free_malloc(t_malloc *mem)
 {
+	size_t	stmp;
+
+	stmp = mem->size;
 	mem->is_free = true;
 	if (mem->prev && mem->prev->is_free)
 	{
@@ -30,6 +33,8 @@ void	free_malloc(t_malloc *mem)
 			mem->next->next->prev = mem;
 		mem->next = mem->next->next;
 	}
+	if (g_line.env & ENV_SCRIBBLE)
+		ft_memset(mem, 0x55, stmp + sizeof(t_malloc));
 }
 
 void	free_page(void **page, char page_type)

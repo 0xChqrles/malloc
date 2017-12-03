@@ -6,7 +6,7 @@
 /*   By: clanier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/02 18:54:20 by clanier           #+#    #+#             */
-/*   Updated: 2017/12/03 20:22:01 by clanier          ###   ########.fr       */
+/*   Updated: 2017/12/03 21:34:52 by clanier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ bool	is_empty(t_page *page)
 		mtmp = page->first;
 		while (mtmp)
 		{
-			if (!mtmp->is_free)
+			if (mtmp->is_free == (g_line.env & ENV_SHOW_FREE))
 				return (false);
 			mtmp = mtmp->next;
 		}

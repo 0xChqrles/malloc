@@ -6,7 +6,7 @@
 /*   By: clanier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/01 17:37:00 by clanier           #+#    #+#             */
-/*   Updated: 2017/12/03 20:23:26 by clanier          ###   ########.fr       */
+/*   Updated: 2017/12/03 21:35:07 by clanier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ size_t	show_page(t_page *page, char *page_name)
 		mtmp = page->first;
 		while (mtmp)
 		{
-			if (!mtmp->is_free)
+			if (mtmp->is_free == (g_line.env & ENV_SHOW_FREE))
 			{
 				total += mtmp->size;
 				from = (size_t)(mtmp) + sizeof(t_malloc);
@@ -75,6 +75,8 @@ void	ft_show_alloc_mem(void)
 	total += show_page(g_line.small, "SMALL");
 	if (!g_line.large)
 		return (print_total(total));
+	if (g_line.env & ENV_SHOW_FREE)
+		return ;
 	print_header("LARGE", (size_t)g_line.large);
 	large = g_line.large;
 	while (large)

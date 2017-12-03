@@ -6,7 +6,7 @@
 /*   By: clanier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/23 16:27:40 by clanier           #+#    #+#             */
-/*   Updated: 2017/12/03 20:22:52 by clanier          ###   ########.fr       */
+/*   Updated: 2017/12/03 21:31:09 by clanier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,9 @@
 # include <pthread.h>
 # include <stdlib.h>
 # include <stdbool.h>
+
+# define ENV_SHOW_FREE	0b01
+# define ENV_SCRIBBLE	0b10
 
 # define TINY 1024
 # define SMALL 4096
@@ -39,6 +42,7 @@ typedef struct			s_line
 {
 	void				*tiny;
 	void				*small;
+	unsigned int		env;
 	t_malloc			*large;
 	rlim_t				limit;
 }						t_line;
