@@ -6,7 +6,7 @@
 /*   By: clanier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/01 17:37:00 by clanier           #+#    #+#             */
-/*   Updated: 2017/12/02 18:55:40 by clanier          ###   ########.fr       */
+/*   Updated: 2017/12/03 20:23:26 by clanier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ size_t	show_page(t_page *page, char *page_name)
 		mtmp = page->first;
 		while (mtmp)
 		{
-			if (!mtmp->isFree)
+			if (!mtmp->is_free)
 			{
 				total += mtmp->size;
 				from = (size_t)(mtmp) + sizeof(t_malloc);

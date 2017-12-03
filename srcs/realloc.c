@@ -6,7 +6,7 @@
 /*   By: clanier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/01 20:55:13 by clanier           #+#    #+#             */
-/*   Updated: 2017/12/02 20:13:16 by clanier          ###   ########.fr       */
+/*   Updated: 2017/12/03 20:59:07 by clanier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	*realloc_memory(void *ptr, size_t size, char page_type)
 		&& size < mtmp->size - sizeof(t_malloc))
 			return (set_malloc(size, &mtmp));
 		else
-			return (mtmp + sizeof(t_malloc));
+			return ((void*)((size_t)mtmp + sizeof(t_malloc)));
 	}
 	if (!(new = ft_malloc(size)))
 		return (NULL);

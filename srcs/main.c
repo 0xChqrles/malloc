@@ -6,7 +6,7 @@
 /*   By: clanier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/02 17:03:38 by clanier           #+#    #+#             */
-/*   Updated: 2017/12/02 20:03:15 by clanier          ###   ########.fr       */
+/*   Updated: 2017/12/03 20:33:57 by clanier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,12 +48,12 @@ void			show_alloc_mem(void)
 	pthread_mutex_unlock(&g_mutex);
 }
 
-void			*calloc(size_t nmemb, size_t size)
+void			*calloc(size_t count, size_t size)
 {
 	void	*ptr;
 
 	pthread_mutex_lock(&g_mutex);
-	ptr = ft_calloc(nmemb, size);
+	ptr = ft_calloc(count, size);
 	pthread_mutex_unlock(&g_mutex);
 	return (ptr);
 }

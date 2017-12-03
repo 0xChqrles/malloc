@@ -6,7 +6,7 @@
 /*   By: clanier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/23 15:36:00 by clanier           #+#    #+#             */
-/*   Updated: 2017/12/02 18:37:02 by clanier          ###   ########.fr       */
+/*   Updated: 2017/12/03 20:21:23 by clanier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,15 +33,15 @@ void	*set_malloc(size_t size, t_malloc **mem)
 {
 	t_malloc	*new;
 
-	new = *mem + sizeof(t_malloc) + size;
+	new = (void*)((size_t)*mem + sizeof(t_malloc) + size);
 	new->size = (*mem)->size - size - sizeof(t_malloc) - 1;
-	new->isFree = true;
+	new->is_free = true;
 	new->next = (*mem)->next;
 	new->prev = *mem;
 	(*mem)->next = new;
-	(*mem)->isFree = false;
+	(*mem)->is_free = false;
 	(*mem)->size = size;
-	return ((*mem) + sizeof(t_malloc));
+	return ((void*)((size_t)*mem + sizeof(t_malloc)));
 }
 
 void	*get_free_memory(size_t size, void **page, size_t size_max)
@@ -55,12 +55,12 @@ void	*get_free_memory(size_t size, void **page, size_t size_max)
 		mtmp = ptmp->first;
 		while (mtmp)
 		{
-			if (mtmp->isFree && mtmp->size > size + sizeof(t_malloc))
+			if (mtmp->is_free && mtmp->size > size + sizeof(t_malloc))
 				return (set_malloc(size, &mtmp));
-			else if (mtmp->isFree && mtmp->size >= size)
+			else if (mtmp->is_free && mtmp->size >= size)
 			{
-				mtmp->isFree = false;
-				return (mtmp + sizeof(t_malloc));
+				mtmp->is_free = false;
+				return ((void*)((size_t)mtmp + sizeof(t_malloc)));
 			}
 			mtmp = mtmp->next;
 		}
@@ -87,7 +87,7 @@ void	*large_malloc(size_t size)
 	new = (t_malloc*)ptr;
 	new->next = NULL;
 	new->prev = NULL;
-	new->isFree = false;
+	new->is_free = false;
 	new->size = size - sizeof(t_malloc);
 	if (!g_line.large)
 		g_line.large = new;

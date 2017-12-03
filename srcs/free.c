@@ -6,7 +6,7 @@
 /*   By: clanier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/01 16:28:45 by clanier           #+#    #+#             */
-/*   Updated: 2017/12/02 18:34:11 by clanier          ###   ########.fr       */
+/*   Updated: 2017/12/03 20:55:10 by clanier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,15 +15,15 @@
 
 void	free_malloc(t_malloc *mem)
 {
-	mem->isFree = true;
-	if (mem->prev && mem->prev->isFree)
+	mem->is_free = true;
+	if (mem->prev && mem->prev->is_free)
 	{
 		mem->prev->size += mem->size + sizeof(t_malloc);
 		mem->prev->next = mem->next;
 		if (mem->next)
 			mem->next->prev = mem->prev;
 	}
-	if (mem->next && mem->next->isFree)
+	if (mem->next && mem->next->is_free)
 	{
 		mem->size += mem->next->size + sizeof(t_malloc);
 		if (mem->next->next)
@@ -43,7 +43,7 @@ void	free_page(void **page, char page_type)
 	mtmp = ptmp->first;
 	while (mtmp)
 	{
-		if (!mtmp->isFree)
+		if (!mtmp->is_free)
 			return ;
 		mtmp = mtmp->next;
 	}
@@ -71,9 +71,9 @@ void	*find_pointer(void *ptr, void **page)
 		if (ptr > (void*)ptmp && ptr < ptmp->end)
 		{
 			mtmp = ptmp->first;
-			while (mtmp && ptr != mtmp + sizeof(t_malloc))
+			while (mtmp && (size_t)ptr != (size_t)mtmp + sizeof(t_malloc))
 				mtmp = mtmp->next;
-			if (mtmp && ptr == mtmp + sizeof(t_malloc))
+			if (mtmp && (size_t)ptr == (size_t)mtmp + sizeof(t_malloc))
 				return (mtmp);
 			else
 				return (NULL);

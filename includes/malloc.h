@@ -6,7 +6,7 @@
 /*   By: clanier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/23 16:27:40 by clanier           #+#    #+#             */
-/*   Updated: 2017/12/02 19:39:05 by clanier          ###   ########.fr       */
+/*   Updated: 2017/12/03 20:22:52 by clanier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,15 +27,15 @@
 # define MMAP_PROT PROT_READ | PROT_WRITE
 # define MMAP_FLAGS MAP_ANON | MAP_PRIVATE
 
-typedef					struct s_malloc
+typedef struct			s_malloc
 {
 	struct s_malloc		*next;
 	struct s_malloc		*prev;
-	bool				isFree;
+	bool				is_free;
 	size_t				size;
 }						t_malloc;
 
-typedef					struct s_line
+typedef struct			s_line
 {
 	void				*tiny;
 	void				*small;
@@ -43,7 +43,7 @@ typedef					struct s_line
 	rlim_t				limit;
 }						t_line;
 
-typedef					struct s_page
+typedef struct			s_page
 {
 	struct s_page		*next;
 	struct s_page		*prev;
@@ -57,7 +57,7 @@ extern pthread_mutex_t	g_mutex;
 
 double					ft_pow(double n, int exp);
 bool					is_empty(t_page *page);
-void					*ft_bzero(void *s, size_t n);
+void					*ft_memset(void *s, int c, size_t n);
 void					*ft_calloc(size_t nmemb, size_t size);
 void					free_malloc(t_malloc *mem);
 void					free_page(void **page, char page_type);
@@ -70,10 +70,12 @@ void					*malloc(size_t size);
 void					free(void *ptr);
 void					*realloc(void *ptr, size_t size);
 void					show_alloc_mem(void);
-void					*calloc(size_t nmemb, size_t size);
-int						create_page(size_t alloc_max, void **page, t_page *prev);
+void					*calloc(size_t count, size_t size);
+int						create_page(size_t alloc_max,
+						void **page, t_page *prev);
 void					*set_malloc(size_t size, t_malloc **mem);
-void					*get_free_memory(size_t size, void **page, size_t size_max);
+void					*get_free_memory(size_t size,
+						void **page, size_t size_max);
 void					*large_malloc(size_t size);
 void					*ft_malloc(size_t size);
 int						ft_strlen(char *s);

@@ -6,7 +6,7 @@
 /*   By: clanier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/02 18:36:02 by clanier           #+#    #+#             */
-/*   Updated: 2017/12/02 18:36:36 by clanier          ###   ########.fr       */
+/*   Updated: 2017/12/03 20:21:50 by clanier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	*init_page(size_t size, void **page, t_page *prev)
 	mhead->size = size - sizeof(t_page) - sizeof(t_malloc) - 2;
 	mhead->prev = NULL;
 	mhead->next = NULL;
-	mhead->isFree = true;
+	mhead->is_free = true;
 	phead = (t_page*)(*page);
 	phead->first = mhead;
 	phead->prev = prev;
