@@ -6,7 +6,7 @@
 /*   By: clanier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/02 17:03:38 by clanier           #+#    #+#             */
-/*   Updated: 2017/12/04 17:45:39 by clanier          ###   ########.fr       */
+/*   Updated: 2017/12/04 19:14:12 by clanier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,8 +83,6 @@ void			*calloc(size_t count, size_t size)
 		ft_putstr("\033[0m\033[31m = \033[1m");
 		ft_putnbr_base(count * size, 10);
 		ft_putstr("\033[0m\033[31m bytes\033[0m\n");
-		ft_putnbr_base((size_t)ptr, 16);
-		ft_putstr("\n");
 	}
 	pthread_mutex_unlock(&g_mutex);
 	return (ptr);
