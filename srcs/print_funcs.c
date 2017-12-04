@@ -6,7 +6,7 @@
 /*   By: clanier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/02 18:43:01 by clanier           #+#    #+#             */
-/*   Updated: 2017/12/02 18:44:47 by clanier          ###   ########.fr       */
+/*   Updated: 2017/12/04 16:30:55 by clanier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int		ft_nbrlen_base(size_t x, int base)
 
 	i = 1;
 	len = base;
-	while (x > len && ++i)
+	while (x >= len && ++i)
 		len *= base;
 	return (i);
 }

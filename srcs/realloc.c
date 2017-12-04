@@ -6,7 +6,7 @@
 /*   By: clanier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/01 20:55:13 by clanier           #+#    #+#             */
-/*   Updated: 2017/12/03 20:59:07 by clanier          ###   ########.fr       */
+/*   Updated: 2017/12/04 16:57:50 by clanier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ void	*realloc_memory(void *ptr, size_t size, char page_type)
 	void		*new;
 
 	mtmp = (t_malloc*)ptr;
+	g_line.old_size = mtmp->size;
 	if (size <= mtmp->size
 	&& (page_type == 't' || (page_type == 's' && size > TINY)))
 	{
@@ -44,7 +45,7 @@ void	*realloc_memory(void *ptr, size_t size, char page_type)
 	if (!(new = ft_malloc(size)))
 		return (NULL);
 	move_data(mtmp, new, size);
-	ft_free(mtmp + sizeof(t_malloc));
+	ft_free((void*)((size_t)mtmp + sizeof(t_malloc)));
 	return (new);
 }
 
@@ -53,6 +54,7 @@ void	*ft_realloc(void *ptr, size_t size)
 	t_malloc	*mtmp;
 	void		*new;
 
+	g_line.old_size = 0;
 	if (!ptr)
 		return (ft_malloc(size));
 	if ((mtmp = find_pointer(ptr, &g_line.tiny)))
@@ -60,9 +62,9 @@ void	*ft_realloc(void *ptr, size_t size)
 	if ((mtmp = find_pointer(ptr, &g_line.small)))
 		return (realloc_memory(mtmp, size, 's'));
 	mtmp = g_line.large;
-	while (mtmp && ptr != mtmp + sizeof(t_malloc))
+	while (mtmp && ptr != (void*)((size_t)mtmp + sizeof(t_malloc)))
 		mtmp = mtmp->next;
-	if (mtmp && ptr == mtmp + sizeof(t_malloc))
+	if (mtmp && ptr == (void*)((size_t)mtmp + sizeof(t_malloc)))
 	{
 		if (mtmp->size >= size && size > SMALL)
 			return (ptr);

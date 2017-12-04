@@ -6,7 +6,7 @@
 /*   By: clanier <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/23 15:36:00 by clanier           #+#    #+#             */
-/*   Updated: 2017/12/03 20:21:23 by clanier          ###   ########.fr       */
+/*   Updated: 2017/12/04 17:49:53 by clanier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,16 +32,18 @@ int		create_page(size_t alloc_max, void **page, t_page *prev)
 void	*set_malloc(size_t size, t_malloc **mem)
 {
 	t_malloc	*new;
+	t_malloc	*mtmp;
 
-	new = (void*)((size_t)*mem + sizeof(t_malloc) + size);
-	new->size = (*mem)->size - size - sizeof(t_malloc) - 1;
+	mtmp = *mem;
+	new = (void*)((size_t)mtmp + sizeof(t_malloc) + size);
+	new->size = mtmp->size - size - sizeof(t_malloc);
 	new->is_free = true;
-	new->next = (*mem)->next;
-	new->prev = *mem;
-	(*mem)->next = new;
-	(*mem)->is_free = false;
-	(*mem)->size = size;
-	return ((void*)((size_t)*mem + sizeof(t_malloc)));
+	new->next = mtmp->next;
+	new->prev = mtmp;
+	mtmp->next = new;
+	mtmp->is_free = false;
+	mtmp->size = size;
+	return ((void*)((size_t)mtmp + sizeof(t_malloc)));
 }
 
 void	*get_free_memory(size_t size, void **page, size_t size_max)
@@ -64,11 +66,11 @@ void	*get_free_memory(size_t size, void **page, size_t size_max)
 			}
 			mtmp = mtmp->next;
 		}
-		ptmp = (t_page*)ptmp->next;
+		ptmp = ptmp->next;
 	}
 	if (create_page(size_max, page, *page) < 0)
 		return (NULL);
-	ptmp = (t_page*)(*page);
+	ptmp = *page;
 	mtmp = ptmp->first;
 	return (set_malloc(size, &mtmp));
 }
@@ -99,7 +101,7 @@ void	*large_malloc(size_t size)
 		tmp->next = new;
 		new->prev = tmp;
 	}
-	return (new + sizeof(t_malloc));
+	return ((void*)((size_t)new + sizeof(t_malloc)));
 }
 
 void	*ft_malloc(size_t size)
